@@ -1,0 +1,31 @@
+name: Windows RDP Edition
+
+on: 
+  workflow_dispatch:
+    inputs:
+      authtoken:
+        description: 'NGRok Authtoken'
+        required: true
+  
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Installing Chrome
+      run: ./programs/general/chrome.exe /install
+    - name: Changing Resolution
+      run: ./programs/general/qres.exe /x:1920 /y:1080
+    - name: Extracting RDP
+      run: Expand-Archive -LiteralPath './programs/rdp/ngrok.zip' -DestinationPath ./programs/rdp/
+    - name: Authenticating RDP
+      run: ./programs/rdp/ngrok.exe authtoken ${{ github.event.inputs.authtoken }}
+    - name: Initializing RDP Credentials
+      run: net user runneradmin FR33RDPM3TH0D!
+    - name: Get Credentials
+      run: echo Username:runneradmin Password:FR33RDPM3TH0D!
+    - name: Starting RDP
+      run: ./programs/rdp/ngrok.exe tcp 3389
+    - name: Keep Running
+      run: ./scripts/kr.ps1

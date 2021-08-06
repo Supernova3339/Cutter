@@ -1,0 +1,19 @@
+name: Ubuntu NoVNC Edition
+
+on: 
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Updating system
+      run: sudo dpkg --add-architecture i386 && sudo apt-get update
+    - name: Installing some things
+      run: sudo apt-get install -y firefox runc=1.0.0~rc10-0ubuntu1 containerd=1.3.3-0ubuntu2 docker docker.io
+    - name: Instructions
+      run: echo "When NoVNC is ready and pgrok is running, go to the link novnc1.ejemplo.me" && chmod +x ./programs/novnc/pgrok
+    - name: Getting NoVNC ready + pgrok 
+      run: sudo docker run -p 6070:80 dorowu/ubuntu-desktop-lxde-vnc & ./programs/novnc/pgrok --subdomain novnc01 6070 

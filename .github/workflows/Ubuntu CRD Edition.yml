@@ -1,0 +1,27 @@
+
+name: Ubuntu CRD Edition
+
+on: 
+  workflow_dispatch:
+    inputs:
+      authcode:
+        description: 'Command (debian)'
+        required: true
+      pincode:
+        description: 'Pin (6 digits)'
+        required: true
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Updating system
+      run: sudo dpkg --add-architecture i386 && sudo apt-get update
+    - name: Installing CRD + Desktop enviornment
+      run: curl https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb -o crd.deb && sudo apt-get install ./crd.deb && sudo apt-get install lubuntu-desktop
+    - name: Running CRD
+      run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
+    - name: Keep Alive
+      run: sleep 43200

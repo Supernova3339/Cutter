@@ -1,0 +1,28 @@
+name: Windows CRD Edition
+
+on: 
+  workflow_dispatch:
+    inputs:
+      authcode:
+        description: 'Command (powershell)'
+        required: true
+      pincode:
+        description: 'Pin (6 digits)'
+        required: true
+  
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Installing CRD
+      run: ./programs/rdp/crd.msi
+    - name: Installing Chrome
+      run: ./programs/general/chrome.exe /install
+    - name: Changing Resolution
+      run: ./programs/general/qres.exe /x:1920 /y:1080
+    - name: Starting CRD
+      run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
+    - name: Keep Running
+      run: ./scripts/kr.ps1
